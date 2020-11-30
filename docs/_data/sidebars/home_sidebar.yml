@@ -11,7 +11,10 @@ entries:
       url: /
     - output: web,pdf
       title: Oprimisation core
-      url: core.html
+      url: functions.html
+    - output: web,pdf
+      title: 'Adding zoom param on the boundaries '
+      url: graphics.html
     output: web
     title: optimisations
   output: web

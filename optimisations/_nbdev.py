@@ -2,9 +2,25 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {}
+index = {"Ifunction": "00_functions.ipynb",
+         "himmelblau": "00_functions.ipynb",
+         "eggholder": "00_functions.ipynb",
+         "mc_cormick": "00_functions.ipynb",
+         "holder_table": "00_functions.ipynb",
+         "beale": "00_functions.ipynb",
+         "saddle_point": "00_functions.ipynb",
+         "Function": "00_functions.ipynb",
+         "contour": "01_graphics.ipynb",
+         "zoom": "01_graphics.ipynb",
+         "log_contour_levels": "01_graphics.ipynb",
+         "plot_function_3d": "01_graphics.ipynb",
+         "rotate": "01_graphics.ipynb",
+         "plot_function_2d": "01_graphics.ipynb",
+         "plot_function": "01_graphics.ipynb",
+         "plot_all_functions": "01_graphics.ipynb"}
 
-modules = []
+modules = ["functions.py",
+           "graphics.py"]
 
 doc_url = "https://clungu.github.io/optimisations/"
 
