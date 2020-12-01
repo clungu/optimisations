@@ -18,10 +18,14 @@ index = {"Ifunction": "00_functions.ipynb",
          "plot_interactive": "01_graphics.ipynb",
          "plot_function_2d": "01_graphics.ipynb",
          "plot_function": "01_graphics.ipynb",
-         "plot_all_functions": "01_graphics.ipynb"}
+         "plot_all_functions": "01_graphics.ipynb",
+         "tuple_float_cast": "02_optimizers.ipynb",
+         "History": "02_optimizers.ipynb",
+         "optimize": "02_optimizers.ipynb"}
 
 modules = ["functions.py",
-           "graphics.py"]
+           "graphics.py",
+           "optimizers.py"]
 
 doc_url = "https://clungu.github.io/optimisations/"
 

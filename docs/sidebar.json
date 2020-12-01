@@ -2,6 +2,7 @@
   "optimisations": {
     "Overview": "/",
     "Functions": "functions.html",
-    "Graphics": "graphics.html"
+    "Graphics": "graphics.html",
+    "Optimizers": "optimizers.html"
   }
 }
