@@ -29,6 +29,13 @@ nb_path: "00_functions.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An objective function must implement the interface bellow. For now, we only allow for 2D function definitions because n-dimensional can't be easily represented.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -40,7 +47,7 @@ nb_path: "00_functions.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="Ifunction" class="doc_header"><code>class</code> <code>Ifunction</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L17" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Ifunction</code>()</p>
+<h2 id="Ifunction" class="doc_header"><code>class</code> <code>Ifunction</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L16" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Ifunction</code>()</p>
 </blockquote>
 
 </div>
@@ -56,6 +63,47 @@ nb_path: "00_functions.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Ifunction</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span> 
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a np.array of the shape (k, 3) with all the minimum k points of this function. </span>
+<span class="sd">        The two values of the second dimension are the (x,y,z) coordinates of the minimum values </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">coord</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a np.array of the shape (k, 3) with all the evaluations of the given</span>
+<span class="sd">        k points of this function. </span>
+<span class="sd">        The three values of the second dimension are the (x,y,z) coordinates of the minimum values </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span>
+            <span class="n">points</span><span class="p">,</span>
+            <span class="n">z</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">domain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the ((x_min, x_max), (y_min, y_max)) values where this function </span>
+<span class="sd">        is of most interest</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
 
 </div>
     {% endraw %}
@@ -66,9 +114,41 @@ nb_path: "00_functions.ipynb"
 </div>
 </div>
 </div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="himmelblau" class="doc_header"><code>class</code> <code>himmelblau</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L50" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>himmelblau</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Himmelblau function</p>
+<p><a href="https://en.wikipedia.org/wiki/Himmelblau%27s_function">Himmelblau's function</a>: $$f(x, y) = (x^2+y-11)^2 + (x+y^2-7)^2$$</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Himmelblau_function.svg/400px-Himmelblau_function.svg.png" alt="image.png"></p>
 
 </div>
 </div>
@@ -84,7 +164,52 @@ nb_path: "00_functions.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="himmelblau" class="doc_header"><code>class</code> <code>himmelblau</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L51" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>himmelblau</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
+<h2 id="eggholder" class="doc_header"><code>class</code> <code>eggholder</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L80" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>eggholder</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://en.wikipedia.org/wiki/Test_functions_for_optimization">Eggholder function</a>: $$f(x, y) = -(y+47)\sin{\sqrt{|\frac{x}{2} + (y+47)|}} - x\sin{\sqrt{|x-(y+47)|}}$$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Eggholder_function.pdf/page1-400px-Eggholder_function.pdf.jpg" alt="image.png"></p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="mc_cormick" class="doc_header"><code>class</code> <code>mc_cormick</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L107" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>mc_cormick</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
 </blockquote>
 
 </div>
@@ -115,7 +240,49 @@ nb_path: "00_functions.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="eggholder" class="doc_header"><code>class</code> <code>eggholder</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L81" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>eggholder</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
+<h2 id="holder_table" class="doc_header"><code>class</code> <code>holder_table</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L134" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>holder_table</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://en.wikipedia.org/wiki/Test_functions_for_optimization">Hölder table function</a>: 
+{% raw %}
+$$f(x,y)=-\left\lvert \sin{x} \cos{y}\exp{\left( \left\lvert 1 - \frac{\sqrt{x^2+y^2}}{\pi} \right\rvert \right)} \right\rvert $$
+{% endraw %}</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Holder_table_function.pdf/page1-400px-Holder_table_function.pdf.jpg" alt="image.png"></p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="beale" class="doc_header"><code>class</code> <code>beale</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L165" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>beale</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
 </blockquote>
 
 </div>
@@ -146,100 +313,7 @@ nb_path: "00_functions.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="mc_cormick" class="doc_header"><code>class</code> <code>mc_cormick</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L108" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>mc_cormick</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="holder_table" class="doc_header"><code>class</code> <code>holder_table</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L135" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>holder_table</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="beale" class="doc_header"><code>class</code> <code>beale</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L166" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>beale</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="saddle_point" class="doc_header"><code>class</code> <code>saddle_point</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L194" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>saddle_point</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
+<h2 id="saddle_point" class="doc_header"><code>class</code> <code>saddle_point</code><a href="https://github.com/clungu/optimisations/tree/master/optimisations/functions.py#L193" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>saddle_point</code>() :: <a href="/optimisations/functions.html#Ifunction"><code>Ifunction</code></a></p>
 </blockquote>
 
 </div>
@@ -288,6 +362,35 @@ nb_path: "00_functions.ipynb"
 
 </div>
 
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All functions are implemented using <code>JAX</code> because it allows us to use auto-differentiation. We need this capability so we can try implementing some optimizations techniques that require the gradient of the objective function.</p>
+<p>If we call <code>grad</code> it compiles a callable for us that we can use to get the partial derivatives with. The <code>argnum</code> part is needed because we have to specify that there are two parameters the parent function uses, and we want the derivative to both of them.</p>
+<p>When implementing Linear Regression or Neural Networks, all the parameters usually sit in a single large matrix, which is the only argument of the function so usually we only need <code>argnums=0</code> which is the default. Except in this case where the parameters are passed individually.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">grad</span>
+
+<span class="n">function_grad</span> <span class="o">=</span> <span class="n">grad</span><span class="p">(</span><span class="n">himmelblau_jnp</span><span class="p">,</span> <span class="n">argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>    <span class="c1"># we want the derivative of both arguments</span>
+<span class="n">function_grad</span><span class="p">(</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">)</span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 

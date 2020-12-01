@@ -2,8 +2,7 @@
 
 __all__ = ['Ifunction', 'himmelblau', 'eggholder', 'mc_cormick', 'holder_table', 'beale', 'saddle_point', 'Function']
 
-# Cell
-#export
+# Internal Cell
 from nbdev.showdoc import *
 import numpy as np
 import numpy as np
