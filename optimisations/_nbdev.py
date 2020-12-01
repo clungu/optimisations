@@ -22,11 +22,20 @@ index = {"Ifunction": "00_functions.ipynb",
          "tuple_float_cast": "02_optimizers.ipynb",
          "History": "02_optimizers.ipynb",
          "optimize": "02_optimizers.ipynb",
-         "optimize_multi": "02_optimizers.ipynb"}
+         "optimize_multi": "02_optimizers.ipynb",
+         "Figure": "03_animations.ipynb",
+         "FixZorderLine3D": "03_animations.ipynb",
+         "nth": "03_animations.ipynb",
+         "decorate_with_derivative_based_plot": "03_animations.ipynb",
+         "color_cycles": "03_animations.ipynb",
+         "single_frame": "03_animations.ipynb",
+         "renderers": "03_animations.ipynb",
+         "animate": "03_animations.ipynb"}
 
 modules = ["functions.py",
            "graphics.py",
-           "optimizers.py"]
+           "optimizers.py",
+           "animations.py"]
 
 doc_url = "https://clungu.github.io/optimisations/"
 
