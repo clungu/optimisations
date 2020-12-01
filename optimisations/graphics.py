@@ -158,6 +158,7 @@ def plot_function_3d(function: Ifunction, ax=None, azimuth=45, angle=45, zoom_fa
 # Internal Cell
 import ipywidgets as widgets
 from ipywidgets import interact, interact_manual
+from .functions import himmelblau
 
 @interact
 def plot_interactive(azimuth=45, rotation=45, zoom_factor=(-1, 1, 0.1), show_projections={True, False}):
