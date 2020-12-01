@@ -403,8 +403,8 @@ $$f(x,y)=x^2-y^2$$
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>All functions are implemented using <code>JAX</code> because it allows us to use auto-differentiation. We need this capability so we can try implementing some optimizations techniques that require the gradient of the objective function.</p>
-<p>If we call <code>grad</code> it compiles a callable for us that we can use to get the partial derivatives with. The <code>argnum</code> part is needed because we have to specify that there are two parameters the parent function uses, and we want the derivative to both of them.</p>
+<p>{% include note.html content='All functions are implemented using <code>JAX</code> because it allows us to use auto-differentiation. We need this capability so we can try implementing some optimizations techniques that require the gradient of the objective function.' %}
+If we call <code>grad</code> it compiles a callable for us that we can use to get the partial derivatives with. The <code>argnum</code> part is needed because we have to specify that there are two parameters the parent function uses, and we want the derivative to both of them.</p>
 <p>When implementing Linear Regression or Neural Networks, all the parameters usually sit in a single large matrix, which is the only argument of the function so usually we only need <code>argnums=0</code> which is the default. Except in this case where the parameters are passed individually.</p>
 
 </div>
