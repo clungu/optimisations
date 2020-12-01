@@ -65,27 +65,31 @@ def rotate(_x: np.ndarray, _y: np.ndarray, angle=45) -> Tuple[np.ndarray, np.nda
         return len(x.shape) == 1 or _is_scalar_point
 
     def __rotate_mesh(xx: np.ndarray, yy: np.ndarray) -> np.ndarray:
+        # clockwise rotation matrix
+        rotation_matrix = np.array([
+            [np.cos(radians), np.sin(radians)],
+            [-np.sin(radians), np.cos(radians)]
+        ])
+
         xx, yy = np.einsum('ij, mnj -> imn', rotation_matrix, np.dstack([xx, yy]))
         return xx, yy
 
     def __rotate_points(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         points = np.hstack((x[:, np.newaxis], y[:, np.newaxis]))
+
         # anti-clockwise rotation matrix
-        x, y = np.einsum('mi, ij -> jm',  points, np.array([
+        rotation_matrix = np.array([
             [np.cos(radians), -np.sin(radians)],
             [np.sin(radians), np.cos(radians)]
-        ]))
+        ])
+
+        x, y = np.einsum('mi, ij -> jm',  points, rotation_matrix)
         return x, y
 
     # apply rotation
     angle = (angle + 90) % 360
     radians = angle * np.pi/180
 
-    # clockwise rotation matrix
-    rotation_matrix = np.array([
-        [np.cos(radians), np.sin(radians)],
-        [-np.sin(radians), np.cos(radians)]
-    ])
 
     if __is_mesh(_x) and __is_mesh(_y):
         _x, _y = __rotate_mesh(_x, _y)
