@@ -16,6 +16,7 @@ from itertools import islice
 
 from .graphics import plot_function
 from .graphics import rotate
+from .optimizers import optimize
 
 # Cell
 class Figure:
