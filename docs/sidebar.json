@@ -1,7 +1,7 @@
 {
   "optimisations": {
     "Overview": "/",
-    "Oprimisation core": "functions.html",
-    "Adding zoom param on the boundaries ": "graphics.html"
+    "Functions": "functions.html",
+    "Graphics": "graphics.html"
   }
 }

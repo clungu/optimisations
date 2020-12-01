@@ -10,10 +10,10 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: Oprimisation core
+      title: Functions
       url: functions.html
     - output: web,pdf
-      title: 'Adding zoom param on the boundaries '
+      title: Graphics
       url: graphics.html
     output: web
     title: optimisations
