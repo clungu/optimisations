@@ -4,9 +4,6 @@ __all__ = ['Figure', 'decorate_with_derivative_based_plot', 'Figure', 'decorate_
            'color_cycles', 'single_frame', 'renderers', 'animate']
 
 # Internal Cell
-%load_ext autoreload
-%autoreload 2
-
 import matplotlib.animation as animation
 from matplotlib import pyplot as plt
 from IPython.display import HTML, display
@@ -120,9 +117,6 @@ def decorate_with_derivative_based_plot(name_of_optimizer: str, history: np.ndar
                     color='#777777', bbox=dict(facecolor='white', alpha=0.8, edgecolor='white'))
 
 # Internal Cell
-%load_ext autoreload
-%autoreload 2
-
 import matplotlib.animation as animation
 from matplotlib import pyplot as plt
 from IPython.display import HTML, display

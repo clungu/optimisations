@@ -19,6 +19,9 @@ entries:
       title: Optimizers
       url: optimizers.html
     - output: web,pdf
+      title: Renderers
+      url: renderers.html
+    - output: web,pdf
       title: Animations
       url: animations.html
     output: web
