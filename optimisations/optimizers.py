@@ -5,11 +5,13 @@ __all__ = ['optimize', 'optimize_multi']
 # Internal Cell
 from jax import grad
 from functools import partial
+import numpy as np
+from typing import Callable, Union
 
 # Internal Cell
 def tuple_float_cast(_tuple):
     x, y = _tuple
-    return float(x), float(y)
+    return np.round(float(x), 3), np.round(float(y), 3)
 
 class History(list):
     """
@@ -23,7 +25,8 @@ class History(list):
         if not hasattr(self, '_get_params'):
             return super().__repr__()
         else:
-            return str([tuple_float_cast(self._get_params(state)) for state in self])
+            elements = [tuple_float_cast(self._get_params(state)) for state in self]
+            return str(elements)
 
 # Internal Cell
 """
@@ -46,9 +49,10 @@ class optimize:
         self.function = function
         self.history = History()
 
-    def using(self, optimizer, name='sgd', derivatives_based=True):
+    def using(self, optimizer, name='sgd', derivatives_based=True, render_decorator: Callable=None):
         self.derivatives_based = derivatives_based
         self.__init, self.__update, self._get_params = optimizer
+        self.render_decorator = render_decorator
 
         # add this to the history object so it can extract the value for presenting them in __repr__
         # otherwise we will see a list of `jax` states
