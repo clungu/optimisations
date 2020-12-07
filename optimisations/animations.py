@@ -20,8 +20,8 @@ from .optimizers import optimize
 
 # Cell
 from .renderers import Figure, decorate_with_derivative_based_plot
-# from typing import List, Union
-# from optimisations.optimizers import optimize
+from typing import List, Union
+from .optimizers import optimize
 
 renderers = {
     'sgd': decorate_with_derivative_based_plot,
