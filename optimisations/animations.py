@@ -19,7 +19,7 @@ from .graphics import rotate
 from .optimizers import optimize
 
 # Cell
-from .renderers import decorate_with_derivative_based_plot
+from .renderers import Figure, decorate_with_derivative_based_plot
 
 renderers = {
     'sgd': decorate_with_derivative_based_plot,
@@ -46,9 +46,14 @@ def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figu
     for i, optimisation in enumerate(optimisations):
         if optimisation.optimizer_name not in renderers and i <= 1:  # only show this error once
             print(f"Couldn't find a propper renderer for function named {optimisation.optimizer_name}. Will try to use the default `decorate_with_derivative_based_plot` method.")
-        renderer = renderers.get(optimisation.optimizer_name, decorate_with_derivative_based_plot)
 
-        renderer(i, optimisation, figure)
+        optimisation.update()
+
+        renderer = renderers.get(optimisation.optimizer_name, decorate_with_derivative_based_plot)
+        points = np.array([np.asarray(optimisation._get_params(state)) for state in optimisation.history])
+        points = [(x, y, optimisation.function(x, y)) for x, y in points]
+
+        renderer(optimisation.optimizer_name, points, figure)
 
     figure.ax_2d.plot()
     print(".", end ="")
@@ -59,6 +64,9 @@ def animate(optimisations: Union[optimize, List[optimize]], figure: Figure=None,
 
     assert len(optimisations) >= 1, f"We need at least one optimisation to animate, but {len(optimisations)} given."
 
+    unique_objective_functions = {optimisation.function for optimisation in optimisations}
+    assert len(unique_objective_functions) == 1, f"We were expecting that all the optimisations would be running over the same objective function but we actually have {len(unique_objective_functions)}, namely {unique_objective_functions}. Please use only one!"
+
     if figure is None:
         figure=Figure(
             fig=plt.figure(figsize=(13,5)),
@@ -66,8 +74,7 @@ def animate(optimisations: Union[optimize, List[optimize]], figure: Figure=None,
             angle=45,
         )
 
-    figure.fig, figure.ax_3d, figure.ax_2d = plot_function(optimisations[0].function, fig=figure.fig, angle=figure.angle, contour_log_scale=figure.contour_log_scale, zoom_factor=figure.zoom_factor)
-    figure.fig.tight_layout()
+    figure = figure.for_function(optimisations[0].function)
 
     animator = animation.FuncAnimation(figure.fig, partial(single_frame, figure=figure, renderers=renderers), fargs=(optimisations,), frames=frames, interval=interval, blit=False)
 

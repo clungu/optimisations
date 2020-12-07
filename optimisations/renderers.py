@@ -37,6 +37,7 @@ class Figure:
 
     def for_function(self, function: Ifunction):
         self.fig, self.ax_3d, self.ax_2d = plot_function(function, fig=self.fig, angle=self.angle, contour_log_scale=self.contour_log_scale, zoom_factor=self.zoom_factor)
+        self.fig.tight_layout()
         return self
 
 # Internal Cell
