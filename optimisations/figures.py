@@ -9,7 +9,6 @@ import numpy as np
 
 from .functions import Ifunction
 from .graphics import plot_function
-from .figures import Figures
 
 # Cell
 class Figure:

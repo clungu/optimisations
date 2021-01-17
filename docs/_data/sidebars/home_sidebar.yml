@@ -16,6 +16,9 @@ entries:
       title: Graphics
       url: graphics.html
     - output: web,pdf
+      title: Figures
+      url: figures.html
+    - output: web,pdf
       title: Optimizers
       url: optimizers.html
     - output: web,pdf

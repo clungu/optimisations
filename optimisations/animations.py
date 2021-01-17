@@ -19,7 +19,8 @@ from .graphics import rotate
 from .optimizers import optimize
 
 # Cell
-from .renderers import Figure, decorate_with_derivative_based_plot
+from .figures import Figure
+from .renderers import decorate_with_derivative_based_plot
 from typing import List, Union
 from .optimizers import optimize
 
