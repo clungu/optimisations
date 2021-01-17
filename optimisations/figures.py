@@ -15,7 +15,7 @@ class Figure:
     """
     This is a wrapper class that binds all the elements of a plot
     """
-    def __init__(self, fig=None, ax_3d=None, ax_2d=None, angle=225, contour_log_scale=True, legend_location="upper right", azimuth_3d=30, zoom_factor=0, force_line_zorder=True, credits=None):
+    def __init__(self, fig=None, ax_3d=None, ax_2d=None, angle=225, contour_log_scale=True, legend_location="upper right", azimuth_3d=30, zoom_factor=0, force_line_zorder=True, credits=None, function: Ifunction=None):
         self.fig = fig
         self.ax_3d = ax_3d
         self.ax_2d = ax_2d
