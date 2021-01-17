@@ -62,7 +62,8 @@ def decorate_with_derivative_based_plot(name_of_optimizer: str, history: np.ndar
     Note: This decorating function should be used for derivative based optimisers as it only draws
     a single point for each time-step. Other optimisers could be displayed diffrently.
     """
-    # we expect the `history` to be a list of (x, y, z) coordinates (so a single point per histrical timestep)
+    # we expect the `history` to be a list of (x, y) coordinates (so a single point per historical timestep)
+    history = [(x, y, figure.function(x, y)) for x, y in history]
 
     x, y, z = list(zip(*history))
     x, y, z = np.array(x), np.array(y), np.array(z)

@@ -52,11 +52,15 @@ def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figu
 
         optimisation.update()
 
-        renderer = renderers.get(optimisation.optimizer_name, decorate_with_derivative_based_plot)
-        points = np.array([np.asarray(optimisation._get_params(state)) for state in optimisation.history])
-        points = [(x, y, optimisation.function(x, y)) for x, y in points]
+        renderer = optimisation.render_decorator
+        renderer = renderer if renderer is not None else decorate_with_derivative_based_plot
 
-        renderer(optimisation.optimizer_name, points, figure)
+#         renderer = renderers.get(optimisation.optimizer_name, decorate_with_derivative_based_plot)
+
+        history = np.array([np.asarray(optimisation._get_params(state)) for state in optimisation.history])
+#         points = [(x, y, optimisation.function(x, y)) for x, y in points]
+
+        renderer(optimisation.optimizer_name, history, figure)
 
     figure.ax_2d.plot()
     print(".", end ="")
