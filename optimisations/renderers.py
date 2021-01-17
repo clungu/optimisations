@@ -17,7 +17,7 @@ from itertools import islice
 from .functions import Ifunction
 from .graphics import plot_function
 from .graphics import rotate
-from .figures import Figures
+from .figures import Figure
 
 # Internal Cell
 from itertools import cycle
