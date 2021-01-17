@@ -92,6 +92,63 @@ class optimize:
             self.history.append(self.state)
         return self.history
 
+# Internal Cell
+import re
+
+def heuristic_get_jax_optimizer_name(init):
+    """
+    Tries to find the name of the optimiser used to instantiate the init function, by parting the
+    string representation of the given function.
+
+    JAX based optimisers usually have the following string representation:
+
+        function jax.experimental.optimizers.sgd.<locals>.init(x0)
+        function jax.experimental.optimizers.sgd.<locals>.update(i, g, x)
+        function jax.experimental.optimizers.sgd.<locals>.get_params(x)
+
+    """
+    function_name = str(init)
+    result = re.search("function\s+([^\.]+)", function_name)
+    if result is not None:
+        return result.group(1)
+    else:
+        None
+
+# Internal Cell
+def build_optimizer_params(elements_list):
+    optimizer_params = dict()
+    if len(elements_list) == 1:
+        optimizer_params['optimizer'] = (init, update, get_params) = elements_list[0]
+        assert callable(init), f"Expected {init} be a callable."
+        assert callable(update), f"Expected {update} be a callable."
+        assert callable(get_params), f"Expected {get_params} be a callable."
+
+        optimizer_params['name'] = heuristic_get_jax_optimizer_name(init)
+    elif len(elements_list) == 2:
+        optimizer_params = elements_list[1]
+        optimizer_params['optimizer'] = (init, update, get_params) = elements_list[0]
+        assert callable(init), f"Expected {init} be a callable."
+        assert callable(update), f"Expected {update} be a callable."
+        assert callable(get_params), f"Expected {get_params} be a callable."
+
+    elif len(elements_list) == 3:
+        optimizer_params['optimizer'] = (init, update, get_params) = elements_list
+        assert callable(init), f"Expected {init} be a callable."
+        assert callable(update), f"Expected {update} be a callable."
+        assert callable(get_params), f"Expected {get_params} be a callable."
+
+        optimizer_params['name'] = heuristic_get_jax_optimizer_name(init)
+    else:
+        raise f"""
+        Unknown optimizer constructor list shape or size {len(elements_list)}.
+        Expected either
+            1 for [(init, update, get_params)] or
+            2 for [(init, update, get_params), \{other: configs\}] or
+            3 for (init, update, get_params)
+        Received {elements_list}
+        """
+    return optimizer_params
+
 # Cell
 class optimize_multi:
     def __init__(self, function):
@@ -106,4 +163,4 @@ class optimize_multi:
         return self
 
     def tolist(self):
-        return [optimize(self.function).using(**kwargs).start_from(self.params) for kwargs in self.optimizers]
+        return [optimize(self.function).using(**build_optimizer_params(optimizer)).start_from(self.params) for optimizer in self.optimizers]
