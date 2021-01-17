@@ -2,6 +2,15 @@
 
 __all__ = ['Figure']
 
+# Internal Cell
+from matplotlib import pyplot as plt
+from IPython.display import HTML, display
+import numpy as np
+
+from .functions import Ifunction
+from .graphics import plot_function
+from .figures import Figures
+
 # Cell
 class Figure:
     """
