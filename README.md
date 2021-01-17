@@ -12,7 +12,7 @@ This project includes utilities to visualize different kinds of plots and animat
 
 You can pick any of the `Ifunction` definitions and used them with a custom optimizer or a common one found in the `jax` library to see how they function.
 
-```python
+```
 from jax.experimental.optimizers import sgd
 
 from optimisations.functions import himmelblau
