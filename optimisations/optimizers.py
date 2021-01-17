@@ -49,7 +49,7 @@ class optimize:
         self.function = function
         self.history = History()
 
-    def using(self, optimizer, name='sgd', derivatives_based=True, render_decorator: Callable=None):
+    def using(self, optimizer=(None, None, None), name='sgd', derivatives_based=True, render_decorator: Callable=None):
         self.derivatives_based = derivatives_based
         self.__init, self.__update, self._get_params = optimizer
         self.render_decorator = render_decorator
@@ -106,4 +106,4 @@ class optimize_multi:
         return self
 
     def tolist(self):
-        return [optimize(self.function).using(optimizer, name=name, derivatives_based=derivatives_based).start_from(self.params) for optimizer, name, derivatives_based in self.optimizers]
+        return [optimize(self.function).using(**kwargs).start_from(self.params) for kwargs in self.optimizers]

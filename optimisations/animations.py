@@ -7,7 +7,7 @@ import matplotlib.animation as animation
 from matplotlib import pyplot as plt
 from IPython.display import HTML, display
 from itertools import cycle
-from typing import List, Union
+from typing import List, Union, Callable
 from cycler import cycler
 from functools import partial
 from mpl_toolkits.mplot3d.art3d import Line3D, Poly3DCollection
