@@ -1,5 +1,7 @@
-include settings.ini
 include LICENSE
 include CONTRIBUTING.md
 include README.md
+include *.ipynb
+include nbdev.yml
+include _quarto.yml
 recursive-exclude * __pycache__

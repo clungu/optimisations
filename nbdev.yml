@@ -1,0 +1,14 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "optimisations"
+  site-url: "https://clungu.github.io/optimisations"
+  description: "A playground for visualising optimisation algorithms on two-dimensional objective functions"
+  repo-branch: master
+  repo-url: "https://github.com/clungu/optimisations"
+
+format-links:
+  - html
+  - format: commonmark
+    text: Markdown

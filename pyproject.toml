@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "optimisations"
+version = "0.0.1"
+description = "A playground for visualising optimisation algorithms on two-dimensional objective functions"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [{name = "C. Lungu"}]
+keywords = ["optimisation", "visualisation", "jax", "notebooks"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "jax>=0.4.30",
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "ipython>=8",
+]
+
+[project.optional-dependencies]
+dev = ["nbdev>=3.3,<4", "ipykernel", "ipywidgets", "jupyterlab"]
+
+[project.urls]
+Repository = "https://github.com/clungu/optimisations"
+Documentation = "https://clungu.github.io/optimisations/"
+
+[project.entry-points.nbdev]
+optimisations = "optimisations._modidx:d"
+
+[tool.setuptools.packages.find]
+include = ["optimisations*"]
+
+[tool.nbdev]
+nbs_path = "."
+doc_path = "_docs"
+recursive = false
+branch = "master"

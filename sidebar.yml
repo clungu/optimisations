@@ -1,0 +1,10 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_functions.ipynb
+      - 01_graphics.ipynb
+      - 02_figures.ipynb
+      - 03_optimizers.ipynb
+      - 04_renderers.ipynb
+      - 05_animations.ipynb
