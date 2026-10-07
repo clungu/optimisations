@@ -1,8 +1,14 @@
 source "https://rubygems.org"
 
-gem 'github-pages', group: :jekyll_plugins
+# The github-pages bundle pins jekyll-remote-theme to a release requiring
+# rubyzip < 3. Use explicit site dependencies so security updates can resolve.
+gem "jekyll", "~> 3.10"
+gem "jekyll-theme-cayman", "~> 0.2"
+gem "jekyll-remote-theme", "~> 0.6.2", group: :jekyll_plugins
+gem "kramdown", "~> 2.5"
+gem "kramdown-parser-gfm", "~> 1.1"
 
-# Added at 2019-11-25 10:11:40 -0800 by jhoward:
-gem "nokogiri", "< 1.10.9"
-gem "jekyll", ">= 3.7"
-gem "kramdown", ">= 2.3.0"
+# Security floors also apply when these gems are pulled in transitively.
+gem "nokogiri", ">= 1.19.4", "< 2"
+gem "rexml", ">= 3.4.4", "< 4"
+gem "rubyzip", ">= 3.7.0", "< 4"
