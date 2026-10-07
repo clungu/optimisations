@@ -55,26 +55,12 @@ make docs
 ```
 
 This runs `nbdev-docs` and `nbdev-readme`. The site is built into the ignored
-`_docs/` directory. The tracked `docs/` directory is a historical Jekyll
-snapshot, **not** the current nbdev3 site. Building `_docs/` does not publish it;
-site deployment must be configured separately. Use `nbdev-preview` to inspect
-the site locally.
-
-To build the historical Jekyll snapshot, use Ruby 3.3 and Bundler 4:
-
-```sh
-cd docs
-bundle install
-bundle exec jekyll build --destination ../_docs/jekyll
-```
-
-Its Gemfile lists the site dependencies explicitly rather than using the
-`github-pages` bundle, which pins a remote-theme plugin that disallows patched
-rubyzip releases. Minimum versions for Nokogiri, REXML, and rubyzip prevent
-resolving back to vulnerable releases. To refresh these dependencies, run
-`bundle update nokogiri rexml rubyzip jekyll-remote-theme` from `docs/` and
-commit both `Gemfile` and `Gemfile.lock` when changed. This bundle is for local
-or custom builds; it does not override GitHub Pages' managed build environment.
+`_docs/` directory, which is the only documentation build output. Edit the
+source notebooks rather than generated HTML, and do not commit `_docs/`.
+The legacy Jekyll site and its Ruby dependencies have been removed.
+Building `_docs/` does not publish it; site deployment must be configured
+separately to publish this output, not the former `docs/` directory.
+Use `nbdev-preview` to inspect the site locally.
 
 Edit `index.ipynb`, not the generated `README.md`. The README's GIF preview
 comes from `README-example.gif`; run `./demo.sh` when the example changes and
