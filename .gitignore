@@ -127,6 +127,7 @@ Thumbs.db
 .pytest_cache
 _docs/
 _proc/
+/output/*.html
 
 # tools/trust-doc-nbs
 docs_src/.last_checked

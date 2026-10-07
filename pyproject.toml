@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["nbdev>=3.3,<4", "ipykernel", "ipywidgets", "jupyterlab"]
+dev = ["nbdev>=3.3,<4", "ipykernel", "ipywidgets", "jupyterlab", "Pillow>=10"]
 
 [project.urls]
 Repository = "https://github.com/clungu/optimisations"

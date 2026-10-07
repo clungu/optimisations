@@ -1,5 +1,7 @@
 project:
   type: website
+  resources:
+    - README-example.gif
 
 format:
   html:
