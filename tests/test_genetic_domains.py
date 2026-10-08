@@ -68,7 +68,7 @@ class DomainTests(unittest.TestCase):
         run = optimize(eggholder()).using(genetic_algo(seed=7), derivatives_based=False).start_from([0, 0])
         state = run.state
         with self.assertRaisesRegex(ValueError, "within.*domain"):
-            run.start_from([513, 0])
+            run.start_from([1001, 0])
         self.assertIs(run.state, state)
         self.assertEqual(len(run.history), 1)
         self.assertIs(run.history[0], state)
@@ -88,7 +88,7 @@ class DomainTests(unittest.TestCase):
             (genetic_algo(seed=3), {"derivatives_based": False}),
         ]).start_from([0, 0]).tolist()
         for run in runs:
-            np.testing.assert_array_equal(run.state.bounds, [[-512, -512], [512, 512]])
+            np.testing.assert_array_equal(run.state.bounds, [[-1000, -1000], [1000, 1000]])
 
     def test_legacy_derivative_free_triples_do_not_receive_new_arguments(self):
         init = lambda params: np.asarray(params)
@@ -167,6 +167,7 @@ class BenchmarkRegressionTests(unittest.TestCase):
                 with self.subTest(objective=type(objective).__name__, seed=seed):
                     run = optimize(objective).using(
                         genetic_algo(encoding="ieee754", operators="guarded",
+                                     max_offset=512 if isinstance(objective, eggholder) else None,
                                      mutation_chance=0.48 / 128, seed=seed),
                         derivatives_based=False,
                     ).start_from([0, 0])

@@ -5,14 +5,14 @@
 # %% auto #0
 __all__ = ['Function', 'Ifunction', 'himmelblau', 'eggholder', 'mc_cormick', 'holder_table', 'beale', 'saddle_point']
 
-# %% ../00_functions.ipynb #14ba2bb6
+# %% ../00_functions.ipynb #functions-imports
 from numbers import Real
 
 import numpy as np
 
 import jax.numpy as jnp
 
-# %% ../00_functions.ipynb #976bca96
+# %% ../00_functions.ipynb #functions-interface
 class Ifunction:
     def __init__(self):
         pass 
@@ -46,7 +46,7 @@ class Ifunction:
         """
         pass
 
-# %% ../00_functions.ipynb #4077171f
+# %% ../00_functions.ipynb #functions-himmelblau
 class himmelblau(Ifunction):
     def __call__(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
@@ -76,7 +76,7 @@ class himmelblau(Ifunction):
             [-5, 5]
         ])
 
-# %% ../00_functions.ipynb #e39b2c14
+# %% ../00_functions.ipynb #functions-eggholder
 class eggholder(Ifunction):
     def __call__(self, x: jnp.ndarray, y: jnp.ndarray) -> np.ndarray:
         """
@@ -102,11 +102,11 @@ class eggholder(Ifunction):
         is of most interest
         """
         return np.array([
-            [-512, 512],
-            [-512, 512]
+            [-1000, 1000],
+            [-1000, 1000]
         ])
 
-# %% ../00_functions.ipynb #05e215ac
+# %% ../00_functions.ipynb #functions-mccormick
 class mc_cormick(Ifunction):
     def __call__(self, x: jnp.ndarray, y: jnp.ndarray) -> np.ndarray:
         """
@@ -133,7 +133,7 @@ class mc_cormick(Ifunction):
             [-3, 4]
         ])
 
-# %% ../00_functions.ipynb #170578c7
+# %% ../00_functions.ipynb #functions-holder-table
 class holder_table(Ifunction):
     def __call__(self, x: jnp.ndarray, y: jnp.ndarray) -> np.ndarray:
         """
@@ -163,7 +163,7 @@ class holder_table(Ifunction):
             [-10, 10]
         ])
 
-# %% ../00_functions.ipynb #c5c44a3c
+# %% ../00_functions.ipynb #functions-beale
 class beale(Ifunction):
     def __call__(self, x: jnp.ndarray, y: jnp.ndarray) -> np.ndarray:
         """
@@ -190,7 +190,7 @@ class beale(Ifunction):
             [-4, 4]
         ])
 
-# %% ../00_functions.ipynb #9f6311a4
+# %% ../00_functions.ipynb #functions-saddle-point
 class saddle_point(Ifunction):
     def __call__(self, x: jnp.ndarray, y: jnp.ndarray) -> np.ndarray:
         """
@@ -217,6 +217,6 @@ class saddle_point(Ifunction):
             [-1.5, 1]
         ])
 
-# %% ../00_functions.ipynb #43c9cfc8
+# %% ../00_functions.ipynb #functions-registry
 Function = {clazz.__name__: clazz() for clazz in Ifunction.__subclasses__()}
 Function

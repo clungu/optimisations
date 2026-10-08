@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 
 from optimisations.animations import animate, renderers, single_frame
 from optimisations.figures import Figure
-from optimisations.functions import himmelblau
+from optimisations.functions import eggholder, himmelblau
 from optimisations.genetic import Diagnostics, genetic_algo
 from optimisations.graphics import rotate
 from optimisations.optimizers import optimize, optimize_multi
@@ -217,6 +217,22 @@ class PopulationRenderingTests(unittest.TestCase):
             video = animate(runs, frames=2, output="js", show_diagnostics=True)
         self.assertIn("animation", video)
         self.assertEqual([len(run.history) for run in runs], [3, 3])
+
+    def test_eggholder_animation_uses_expanded_domain(self):
+        function = eggholder()
+        np.testing.assert_array_equal(function.domain(), [[-1000, 1000], [-1000, 1000]])
+        run = optimize(function).using(
+            genetic_algo(encoding="ieee754", operators="guarded",
+                         mutation_chance=0.48 / 128, seed=7),
+            derivatives_based=False,
+        ).start_from([0.0, 0.0])
+        figure = Figure(angle=45, contour_log_scale=False)
+        with patch("optimisations.animations.display"):
+            video = animate(run, figure=figure, frames=2, output="js", show_diagnostics=True)
+        self.assertIn("animation", video)
+        np.testing.assert_array_equal(run.state.bounds, [[-1000, -1000], [1000, 1000]])
+        np.testing.assert_allclose(figure.ax_3d.get_xlim(), [-1000, 1000])
+        np.testing.assert_allclose(figure.ax_3d.get_ylim(), [-1000, 1000])
 
 
 if __name__ == "__main__":
