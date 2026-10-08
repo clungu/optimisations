@@ -73,9 +73,23 @@ This runs `nbdev-docs` and `nbdev-readme`. The site is built into the ignored
 `_docs/` directory, which is the only documentation build output. Edit the
 source notebooks rather than generated HTML, and do not commit `_docs/`.
 The legacy Jekyll site and its Ruby dependencies have been removed.
-Building `_docs/` does not publish it; site deployment must be configured
-separately to publish this output, not the former `docs/` directory.
 Use `nbdev-preview` to inspect the site locally.
+
+### Publish to GitHub Pages
+
+In the repository's **Settings > Pages > Build and deployment**, set **Source**
+to **GitHub Actions**, replacing the former branch-based `docs/` source.
+This is a one-time repository setting and requires administrator access.
+
+The `CI` workflow builds the site with Python 3.12 and uploads `_docs/` as the
+Pages artifact. Once all CI jobs succeed, pushes to the default branch deploy
+that artifact to <https://clungu.github.io/optimisations/> using the
+`github-pages` environment. Pull requests and other branches still run CI but
+do not publish. To republish without a new commit, run `CI` from the Actions
+tab with **Run workflow**, selecting the default branch. Building locally with
+`make docs` does not publish the site.
+
+### Update the README and examples
 
 Edit `index.ipynb`, not the generated `README.md`. The README's GIF preview
 comes from `README-example.gif`; run `./demo.sh` when the example changes and
