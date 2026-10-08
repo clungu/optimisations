@@ -5,6 +5,12 @@ are the source of truth for `optimisations/`. The generated Python modules and
 `optimisations/_modidx.py` should be committed, but edited through their
 notebooks rather than directly. `index.ipynb` is the source of `README.md`.
 
+`06_genetic_algorithm.ipynb` implements the derivative-free genetic optimizer.
+It uses the same optimizer triple as the gradient methods, with
+`derivatives_based=False`. Population rendering lives in `04_renderers.ipynb`;
+`05_animations.ipynb` includes a mixed Adam/genetic example. Use an explicit
+`seed` in reproducible examples and tests.
+
 ## Set up a development environment
 
 Use Python 3.10 or newer:

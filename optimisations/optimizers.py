@@ -4,6 +4,7 @@
 __all__ = ['optimize', 'optimize_multi']
 
 # %% ../03_optimizers.ipynb #9e1aa1ff
+import numpy as np
 from jax import grad
 from functools import partial
 from typing import Callable, Union
@@ -25,7 +26,10 @@ class History(list):
         if not hasattr(self, '_get_params'):
             return super().__repr__()
         else:
-            elements = [tuple_float_cast(self._get_params(state)) for state in self]
+            elements = []
+            for state in self:
+                params = np.asarray(self._get_params(state))
+                elements.append(tuple_float_cast(params) if params.ndim == 1 else np.round(params, 3).tolist())
             return str(elements)
 
 # %% ../03_optimizers.ipynb #7711bcd1
@@ -54,6 +58,7 @@ class optimize:
         self.history = History()        
 
     def using(self, optimizer=(None, None, None), name=None, derivatives_based=True, render_decorator: Callable=None):
+        """Configure a triple; derivative-free updates receive the objective, not its gradient."""
         self.derivatives_based = derivatives_based
         self.__init, self.__update, self._get_params = optimizer
         self.render_decorator = render_decorator

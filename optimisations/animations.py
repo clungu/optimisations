@@ -21,7 +21,7 @@ from optimisations.optimizers import optimize
 
 # %% ../05_animations.ipynb #bc05a2f0
 from .figures import Figure
-from .renderers import decorate_with_derivative_based_plot
+from .renderers import decorate_with_derivative_based_plot, decorate_with_derivative_free_plot
 from typing import List, Union
 from .optimizers import optimize
 
@@ -31,11 +31,14 @@ renderers = {
     'adamax': decorate_with_derivative_based_plot,
     'adam': decorate_with_derivative_based_plot,
     'momentum': decorate_with_derivative_based_plot,
-#     'ga': decorate_with_genetic_algo_plot
+    'ga': decorate_with_derivative_free_plot,
+    'genetic_algo': decorate_with_derivative_free_plot,
 }
 
 
 def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figure, renderers: dict):
+    if isinstance(i, bool) or not isinstance(i, (int, np.integer)) or i < 0:
+        raise ValueError('Frame index must be a nonnegative integer')
     # make sure we have a list of optimizers going forward
     optimisations = [optimisations] if isinstance(optimisations, optimize) else optimisations
 
@@ -51,13 +54,11 @@ def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figu
         if i >= len(optimisation.history) - 1:
             optimisation.update(i - len(optimisation.history) + 2)
 
+        # Frame zero shows the first update, even when history was precomputed.
+        history = np.array([np.asarray(optimisation._get_params(state)) for state in optimisation.history[:i + 2]])
+        default_renderer = decorate_with_derivative_free_plot if history.ndim == 3 else decorate_with_derivative_based_plot
         renderer = optimisation.render_decorator
-        renderer = renderer if renderer is not None else renderers.get(optimisation.optimizer_name, decorate_with_derivative_based_plot)
-        
-#         renderer = renderers.get(optimisation.optimizer_name, decorate_with_derivative_based_plot)
-
-        history = np.array([np.asarray(optimisation._get_params(state)) for state in optimisation.history])
-#         points = [(x, y, optimisation.function(x, y)) for x, y in points]
+        renderer = renderer if renderer is not None else renderers.get(optimisation.optimizer_name, default_renderer)
 
         renderer(optimisation.optimizer_name, history, figure)
 

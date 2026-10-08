@@ -8,3 +8,4 @@ website:
       - 03_optimizers.ipynb
       - 04_renderers.ipynb
       - 05_animations.ipynb
+      - 06_genetic_algorithm.ipynb
