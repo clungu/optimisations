@@ -60,7 +60,8 @@ The library also allows to illustrate the optimisation process for other derivat
 
 ## Install
 
-Use `pip install optimisations` if you only need the package. For MP4 animations, install the `ffmpeg` executable separately; `output='js'` does not need it.
+Clone this repository and use `pip install -e .`. 
+For MP4 animations, install the `ffmpeg` executable separately; `output='js'` does not need it.
 
 ## Documentation 
 
