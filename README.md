@@ -62,6 +62,10 @@ The library also allows to illustrate the optimisation process for other derivat
 
 Use `pip install optimisations` if you only need the package. For MP4 animations, install the `ffmpeg` executable separately; `output='js'` does not need it.
 
+## Documentation 
+
+Full documentation is available at [https://clungu.github.io/optimisations](https://clungu.github.io/optimisations).
+
 ## Development
 From a checkout, use Python 3.10 or newer:
 
