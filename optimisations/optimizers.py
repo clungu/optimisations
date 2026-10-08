@@ -88,8 +88,14 @@ class optimize:
 
 
     def start_from(self, params):
+        """Initialise, passing the objective only to optimisers that opt in."""
+        init_with_objective = getattr(self.__init, 'with_objective', None)
+        if not self.derivatives_based and init_with_objective is not None:
+            state = init_with_objective(tuple(params), objective=self.function)
+        else:
+            state = self.__init(tuple(params))
         self.history.clear()
-        self.state = self.__init(tuple(params))
+        self.state = state
         self.history.append(self.state)
         return self
 

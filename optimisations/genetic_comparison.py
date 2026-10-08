@@ -130,6 +130,8 @@ def _comparison_options(objective, start, seeds, evaluation_budget, population_s
         raise ValueError('seeds must be a nonempty iterable of nonnegative integers')
     seeds = tuple(_integer_option(seed, 'seed', 0) for seed in seeds)
     # Reuse the public GA's validation and bounds policy before any objective call.
+    if max_offset is None:
+        raise ValueError('max_offset must be a finite real number')
     init, _, _ = genetic_algo(population_size, max_offset,
                               mutation_chance=expected_mutations / 48,
                               seed=0, max_retries=max_retries)
@@ -145,7 +147,8 @@ def _run_ga(tracked, start, seed, method, population_size, max_offset,
     bits = 48 if encoding == 'fixed' else 128
     init, update, get_params = genetic_algo(
         population_size, max_offset, mutation_chance=expected_mutations / bits,
-        seed=seed, encoding=encoding, operators=operators, max_retries=max_retries)
+        seed=seed, encoding=encoding, operators=operators, max_retries=max_retries,
+        exploration_chance=0)
     state = init(start)
     diagnostics = []
     try:

@@ -111,6 +111,24 @@ def _starting_bounds(params, max_offset):
         raise ValueError('max_offset must give finite, representable, nondegenerate bounds')
     return params, bounds
 
+
+def _objective_bounds(params, objective):
+    domain = getattr(objective, 'domain', None)
+    if domain is None:
+        return _starting_bounds(params, 4)
+    params, _ = _starting_bounds(params, 0)
+    bounds = np.asarray(domain())
+    if bounds.shape != (2, 2) or bounds.dtype.kind not in 'iuf':
+        raise ValueError('objective domain must contain two finite [lower, upper] pairs')
+    with np.errstate(over='ignore', invalid='ignore'):
+        bounds = bounds.astype(np.float64).T.copy()
+        width = bounds[1] - bounds[0]
+    if not np.all(np.isfinite(bounds)) or not np.all(np.isfinite(width)) or np.any(width < 0):
+        raise ValueError('objective domain must have finite, ordered, representable bounds')
+    if np.any(params < bounds[0]) or np.any(params > bounds[1]):
+        raise ValueError('params must lie within the objective domain')
+    return params, bounds
+
 # %% ../06_genetic_algorithm.ipynb #ga-float-codec
 def encode_float64(params):
     """Encode a real pair or (n, 2) array into (n, 128) MSB-first uint8 bits.
@@ -283,9 +301,35 @@ def _displacement(before, after, bounds):
     return float(np.mean(shifts))
 
 
-def _next_ieee_generation(state, params, fitness, objective, operators, rates, max_retries, rng):
+def _explore_offspring(children, parents, bounds, chance, rng):
+    explore = rng.random(len(children)) < chance
+    count = np.count_nonzero(explore)
+    points = rng.random((count, 2))
+    sides = rng.random((count, 2))
+    points = np.where(sides < 0.05, 0, np.where(sides > 0.95, 1, points))
+    local = rng.random(count) < 0.5
+    width = bounds[1] - bounds[0]
+    origins = np.divide(parents[explore][local] - bounds[0], width,
+                        out=np.zeros((np.count_nonzero(local), 2)), where=width != 0)
+    scale = np.exp2(rng.uniform(-24, 0, size=(len(origins), 1)))
+    # Sample local moves in unit coordinates: carry across float-bit cliffs,
+    # reach closed boundaries, and avoid overflowing large physical ranges.
+    points[local] = np.clip(origins + rng.normal(size=origins.shape) * scale, 0, 1)
+    sampled = np.clip(bounds[0] + points * width, bounds[0], bounds[1])
+    children[explore] = encode_float64(sampled)
+    return children
+
+
+def _next_ieee_generation(state, params, fitness, objective, operators, rates, max_retries, rng,
+                          exploration_chance=0):
+    def propose(selected):
+        children, origins = _ieee_offspring(state.generation, selected, operators, rates, rng)
+        if exploration_chance:
+            children = _explore_offspring(children, params[origins], state.bounds, exploration_chance, rng)
+        return children, origins
+
     elite_indices, selected = _select_parents(fitness, rng, ranked=True)
-    children, origins = _ieee_offspring(state.generation, selected, operators, rates, rng)
+    children, origins = propose(selected)
     generation = np.concatenate([state.generation[elite_indices], children])
     next_fitness = np.empty(len(generation))
     next_fitness[:len(elite_indices)] = fitness[elite_indices]
@@ -315,24 +359,27 @@ def _next_ieee_generation(state, params, fitness, objective, operators, rates, m
             else:
                 counts['retries'] += 1
                 selected = rng.choice(len(params), size=2, replace=True, p=probabilities)
-                proposals, retry_origins = _ieee_offspring(state.generation, selected, operators, rates, rng)
+                proposals, retry_origins = propose(selected)
                 child, origin = proposals[0], retry_origins[0]
     diagnostics = Diagnostics(**counts, mutation_displacement=displacement / len(children),
                               exponent_histogram=_exponent_histogram(generation))
     return generation, next_fitness, diagnostics
 
 # %% ../06_genetic_algorithm.ipynb #ga-factory
-def genetic_algo(population_size=50, max_offset=4, *, mutation_chance=0.01, seed=None,
-                 encoding='fixed', operators='standard', max_retries=8):
+def genetic_algo(population_size=50, max_offset=None, *, mutation_chance=0.01, seed=None,
+                 encoding='fixed', operators='standard', max_retries=8, exploration_chance=None):
     """Return (init, update, get_params) for bounded, binary genetic minimisation.
 
-    Use with derivatives_based=False. max_offset bounds each coordinate around
-    the starting point in every mode. Default fixed-point coordinates use 24
+    Use with derivatives_based=False. By default use the objective domain, or
+    offset four if unavailable. Explicit max_offset bounds each coordinate
+    around the starting point. Default fixed-point coordinates use 24
     bits; encoding='ieee754' uses exact float64 bits with standard or guarded
     operators. Invalid IEEE offspring retry at most max_retries additional
     times, then retain a valid parent. Input objective values must be finite;
     malformed returns and exceptions always propagate. Mutation rates have
     mean mutation_chance (see mutation_rates). Diagnostics measure each update.
+    Guarded mode also explores globally and locally with probability 0.1;
+    set exploration_chance=0 for bit-only proposals.
     A fixed seed makes initialisation and independent replays reproducible.
     """
     if population_size is None:
@@ -341,9 +388,15 @@ def genetic_algo(population_size=50, max_offset=4, *, mutation_chance=0.01, seed
             or not isinstance(population_size, Integral) or population_size < 2):
         raise ValueError('population_size must be an integer >= 2, or None')
     population_size = int(population_size)
-    max_offset = _real_option(max_offset, 'max_offset', 0)
+    if max_offset is not None:
+        max_offset = _real_option(max_offset, 'max_offset', 0)
     mutation_chance = _real_option(mutation_chance, 'mutation_chance', 0, 1)
     rates = mutation_rates(encoding, operators, mutation_chance)
+    if exploration_chance is None:
+        exploration_chance = 0.1 if operators == 'guarded' else 0
+    exploration_chance = _real_option(exploration_chance, 'exploration_chance', 0, 1)
+    if exploration_chance and operators != 'guarded':
+        raise ValueError('nonzero exploration_chance requires guarded operators')
     if (isinstance(max_retries, (bool, np.bool_))
             or not isinstance(max_retries, Integral) or max_retries < 0):
         raise ValueError('max_retries must be an integer >= 0')
@@ -357,10 +410,12 @@ def genetic_algo(population_size=50, max_offset=4, *, mutation_chance=0.01, seed
         rng.bit_generator.state = deepcopy(rng_state)
         return rng
 
-    def init(params):
-        params, bounds = _starting_bounds(params, max_offset)
+    def init(params, objective=None):
+        params, bounds = (_objective_bounds(params, objective) if max_offset is None
+                          else _starting_bounds(params, max_offset))
         rng = restore_rng(initial_rng_state)
-        population = bounds[0] + rng.random((population_size, 2)) * (bounds[1] - bounds[0])
+        population = np.clip(bounds[0] + rng.random((population_size, 2)) * (bounds[1] - bounds[0]),
+                             bounds[0], bounds[1])
         population[0] = params
         generation = encode_float64(population) if encoding == 'ieee754' else _encode(population, bounds)
         histogram = _exponent_histogram(generation) if encoding == 'ieee754' else ()
@@ -382,7 +437,7 @@ def genetic_algo(population_size=50, max_offset=4, *, mutation_chance=0.01, seed
         bounds = state.bounds.copy()
         if encoding == 'ieee754':
             generation, next_fitness, diagnostics = _next_ieee_generation(
-                state, params, fitness, objective, operators, rates, max_retries, rng)
+                state, params, fitness, objective, operators, rates, max_retries, rng, exploration_chance)
         else:
             generation, parents = _next_generation(
                 state.generation, fitness, mutation_chance, rng, return_parents=True)
@@ -394,4 +449,5 @@ def genetic_algo(population_size=50, max_offset=4, *, mutation_chance=0.01, seed
                      fitness=next_fitness, encoding=encoding, operators=operators, diagnostics=diagnostics,
                      rng_state=deepcopy(rng.bit_generator.state))
 
+    init.with_objective = init
     return init, update, get_params

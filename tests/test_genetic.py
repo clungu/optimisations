@@ -235,7 +235,7 @@ class GeneticTests(unittest.TestCase):
         for size in (True, False, np.bool_(True), 0, 1, -1, 2.0, "5", [], np.nan, np.inf):
             with self.subTest(population_size=size), self.assertRaisesRegex(ValueError, "population_size"):
                 genetic_algo(population_size=size)
-        for offset in (-1, np.nan, np.inf, -np.inf, True, None, "2", 1j, [2], 10 ** 1000):
+        for offset in (-1, np.nan, np.inf, -np.inf, True, "2", 1j, [2], 10 ** 1000):
             with self.subTest(max_offset=offset), self.assertRaisesRegex(ValueError, "max_offset"):
                 genetic_algo(max_offset=offset)
         for chance in (-0.1, 1.1, np.nan, np.inf, True, None, "0.5", 1j, [0.5]):

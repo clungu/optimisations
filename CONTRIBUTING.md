@@ -13,11 +13,17 @@ Fixed-point remains the default; `encoding="ieee754"` selects exact float64
 DNA, and `operators="guarded"` selects field-aware operators. Enable
 `show_diagnostics=True` in `animate` to inspect rejection/retry counters and
 the surviving population's exponent distribution.
+By default, `optimize` initialises the GA using the objective's `domain()`;
+an explicit `max_offset` retains a start-centred local search. Direct callers
+can use `init(start, objective=function)` for domain discovery. Guarded mode
+adds bounded global/local exploration to avoid premature convergence and
+float-bit cliffs; use `exploration_chance=0` for bit-only operators.
 
 `07_genetic_comparison.ipynb` compares fixed-point, standard IEEE-754, guarded
 IEEE-754, and a real-valued differential-evolution baseline using equal
 objective-evaluation budgets. Use an explicit `seed` in reproducible examples
-and tests. Compare several seeds and coordinate scales before interpreting
+and tests. This comparison keeps guarded exploration disabled for its bit-only
+experiment. Compare several seeds and coordinate scales before interpreting
 a run as evidence that one representation is better.
 
 ## Set up a development environment

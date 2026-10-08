@@ -146,6 +146,7 @@ class GeneticComparisonTests(unittest.TestCase):
         self.assertEqual(len(runs), 3)
         self.assertEqual([r['mutation_chance'] for r in runs], [0.96 / 48, 0.96 / 128, 0.96 / 128])
         self.assertEqual([r['operators'] for r in runs], ['standard', 'standard', 'guarded'])
+        self.assertEqual([r['exploration_chance'] for r in runs], [0, 0, 0])
 
     def test_short_sphere_run_makes_progress(self):
         results = compare_genetic(sphere, [3, -3], seeds=(0, 1), population_size=12,

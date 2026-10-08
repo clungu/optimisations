@@ -6,6 +6,8 @@
 __all__ = ['Function', 'Ifunction', 'himmelblau', 'eggholder', 'mc_cormick', 'holder_table', 'beale', 'saddle_point']
 
 # %% ../00_functions.ipynb #14ba2bb6
+from numbers import Real
+
 import numpy as np
 
 import jax.numpy as jnp
@@ -80,7 +82,10 @@ class eggholder(Ifunction):
         """
         Computes the given function
         """
-        return -(y+47)*jnp.sin(jnp.sqrt(jnp.abs(x/2+(y+47)))) - x*jnp.sin(jnp.sqrt(jnp.abs(x-(y+47))))
+        # Keep NumPy float64 precision for derivative-free search; traced JAX
+        # inputs still use differentiable JAX operations.
+        xp = np if all(isinstance(v, (Real, np.ndarray)) for v in (x, y)) else jnp
+        return -(y+47)*xp.sin(xp.sqrt(xp.abs(x/2+(y+47)))) - x*xp.sin(xp.sqrt(xp.abs(x-(y+47))))
     
     def _min(self) -> np.ndarray:
         """
@@ -88,7 +93,7 @@ class eggholder(Ifunction):
         The two values of the second dimension are the (x,y) coordinates of the minimum values 
         """
         return np.array([
-            [512, 404.239],
+            [512, 404.231805123],
         ])
 
     def domain(self) -> np.ndarray:
