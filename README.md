@@ -5,7 +5,7 @@
 
 ![Gradient descent on the Himmelblau function](README-example.gif)
 
-Visualise 2D objective functions and compare the paths taken by JAX optimisers. Notebooks `00_functions.ipynb` through `05_animations.ipynb` are the source for the installable `optimisations` package.
+Visualise 2D objective functions and compare the paths taken by JAX optimisers.
 
 ## Basic usage
 
@@ -27,6 +27,36 @@ animate(
 );
 ```
 
+## Derivatives free optimisations
+
+![Genetic algorithm on the Himmelblau function](himmelblau-genetic.gif)
+
+```python
+from optimisations.functions import himmelblau
+from optimisations.genetic import genetic_algo
+from optimisations.optimizers import optimize
+from optimisations.animations import animate
+
+animate(
+    optimize(himmelblau())
+        .using(
+            genetic_algo(
+                encoding='ieee754', 
+                operators='guarded',
+                mutation_chance=0.48 / 128, 
+                seed=7,
+            ),
+            derivatives_based=False,
+        )
+        .start_from([-1.0, 1.0]),
+    frames=80,
+    interval=100,
+    output='js',
+    show_diagnostics=True,
+)
+```
+
+The library also allows to illustrate the optimisation process for other derivatives free optimisers, such as a genetic algorithm.
 
 ## Install
 
