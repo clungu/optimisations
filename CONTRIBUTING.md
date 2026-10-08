@@ -8,8 +8,17 @@ notebooks rather than directly. `index.ipynb` is the source of `README.md`.
 `06_genetic_algorithm.ipynb` implements the derivative-free genetic optimizer.
 It uses the same optimizer triple as the gradient methods, with
 `derivatives_based=False`. Population rendering lives in `04_renderers.ipynb`;
-`05_animations.ipynb` includes a mixed Adam/genetic example. Use an explicit
-`seed` in reproducible examples and tests.
+`05_animations.ipynb` includes mixed Adam/genetic and float64-genome examples.
+Fixed-point remains the default; `encoding="ieee754"` selects exact float64
+DNA, and `operators="guarded"` selects field-aware operators. Enable
+`show_diagnostics=True` in `animate` to inspect rejection/retry counters and
+the surviving population's exponent distribution.
+
+`07_genetic_comparison.ipynb` compares fixed-point, standard IEEE-754, guarded
+IEEE-754, and a real-valued differential-evolution baseline using equal
+objective-evaluation budgets. Use an explicit `seed` in reproducible examples
+and tests. Compare several seeds and coordinate scales before interpreting
+a run as evidence that one representation is better.
 
 ## Set up a development environment
 

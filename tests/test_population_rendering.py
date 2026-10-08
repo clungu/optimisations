@@ -1,4 +1,5 @@
 import unittest
+from dataclasses import replace
 from unittest.mock import Mock, patch
 
 import matplotlib
@@ -12,10 +13,14 @@ from matplotlib import pyplot as plt
 from optimisations.animations import animate, renderers, single_frame
 from optimisations.figures import Figure
 from optimisations.functions import himmelblau
-from optimisations.genetic import genetic_algo
+from optimisations.genetic import Diagnostics, genetic_algo
 from optimisations.graphics import rotate
 from optimisations.optimizers import optimize, optimize_multi
-from optimisations.renderers import decorate_with_derivative_free_plot
+from optimisations.renderers import (
+    _exponent_summary,
+    decorate_with_derivative_free_plot,
+    decorate_with_genetic_diagnostics,
+)
 
 
 class PopulationRenderingTests(unittest.TestCase):
@@ -143,6 +148,73 @@ class PopulationRenderingTests(unittest.TestCase):
         self.assertEqual(runs[1].optimizer_name, "genetic_algo")
         with patch("optimisations.animations.display"):
             video = animate(runs, frames=2, output="js")
+        self.assertIn("animation", video)
+        self.assertEqual([len(run.history) for run in runs], [3, 3])
+
+    def test_diagnostic_overlay_is_opt_in_and_uses_displayed_state(self):
+        function = himmelblau()
+        run = (
+            optimize(function)
+            .using(genetic_algo(population_size=5, seed=7, encoding="ieee754", operators="guarded"),
+                   derivatives_based=False)
+            .start_from([-1.0, 1.0])
+        )
+        run.update(3)
+        figure = Figure(contour_log_scale=False).for_function(function)
+        with patch("optimisations.animations.decorate_with_genetic_diagnostics") as overlay:
+            single_frame(0, run, figure, renderers)
+            overlay.assert_not_called()
+            for index in (0, 2, 0):
+                single_frame(index, run, figure, renderers, show_diagnostics=True)
+                rows, actual_figure = overlay.call_args.args
+                self.assertEqual(len(rows), 1)
+                self.assertIs(rows[0][1], run.history[index + 1])
+                self.assertIs(actual_figure, figure)
+        self.assertEqual(len(run.history), 4)
+
+    def test_diagnostic_overlay_skips_non_genetic_runs(self):
+        function = himmelblau()
+        run = optimize(function).using(sgd(0.001)).start_from([-1.0, 1.0])
+        figure = Figure(contour_log_scale=False).for_function(function)
+        with patch("optimisations.animations.decorate_with_genetic_diagnostics") as overlay:
+            single_frame(0, run, figure, renderers, show_diagnostics=True)
+            overlay.assert_not_called()
+
+    def test_diagnostic_text_reports_rejections_fallbacks_and_exponents(self):
+        state = genetic_algo(population_size=3, seed=1, encoding="ieee754")[0]([0.0, 0.0])
+        diagnostics = Diagnostics(
+            evaluations=7, offspring=5, rejected_nonfinite=1, rejected_bounds=1,
+            rejected_objective=1, retries=3, retained_parents=1, mutation_displacement=0.125,
+            exponent_histogram=((0, 1), (1022, 2), (1023, 3)),
+        )
+        state = replace(state, diagnostics=diagnostics)
+        original = state.generation.copy()
+        figure = Figure(contour_log_scale=False).for_function(himmelblau())
+        artist = decorate_with_genetic_diagnostics([("raw", state)], figure)
+        text = artist.get_text()
+        for expected in ("raw [ieee754/standard]", "calls=7", "rejected=3/5 (60%)",
+                         "nonfinite=1", "bounds=1", "objective=1", "retries=3",
+                         "retained=1", "displacement=0.125", "zero/subnormal: 1",
+                         "-8<=e<0: 2", "0<=e<8: 3"):
+            self.assertIn(expected, text)
+        np.testing.assert_array_equal(state.generation, original)
+        self.assertEqual(
+            _exponent_summary(((990, 1), (991, 2), (1015, 3), (1023, 4), (1031, 5), (1055, 6))),
+            "e<-32: 1, -32<=e<-8: 2, -8<=e<0: 3, 0<=e<8: 4, 8<=e<32: 5, e>=32: 6",
+        )
+        self.assertEqual(_exponent_summary(()), "not recorded")
+
+    def test_ieee_modes_animate_with_diagnostics(self):
+        function = himmelblau()
+        runs = [
+            optimize(function).using(
+                genetic_algo(population_size=5, seed=7, encoding="ieee754", operators=operators),
+                name=operators, derivatives_based=False,
+            ).start_from([-1.0, 1.0])
+            for operators in ("standard", "guarded")
+        ]
+        with patch("optimisations.animations.display"):
+            video = animate(runs, frames=2, output="js", show_diagnostics=True)
         self.assertIn("animation", video)
         self.assertEqual([len(run.history) for run in runs], [3, 3])
 

@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import unittest
 
 import numpy as np
@@ -112,6 +113,28 @@ class GeneticTests(unittest.TestCase):
         self.assertEqual(before[0], after[0])
         np.testing.assert_array_equal(before[1], after[1])
         self.assertEqual(before[2:], after[2:])
+
+    def test_fixed_seeded_behavior_and_diagnostic_cost_are_preserved(self):
+        init, update, _ = genetic_algo(10, seed=8)
+        state = init([3, -3])
+        self.assertEqual(state.encoding, "fixed")
+        self.assertEqual(state.operators, "standard")
+        self.assertEqual(state.diagnostics.evaluations, 0)
+        expected = (
+            "77a5f007b90727e579dbbf85cb78f4620be2a4e0e95f0a2452ef08f7c678135f",
+            "1e0cf0568adb611c115eaabcb22bb911dcf06d9dfe002f559f4a7324947459b8",
+            "daf4cd6e3a4e4a290f910f67509f82485cafd140629f269435dd48a610f74a1e",
+        )
+        for i, digest in enumerate(expected):
+            state = update(i, sphere, state)
+            self.assertEqual(hashlib.sha256(state.generation.tobytes()).hexdigest(), digest)
+            self.assertEqual(state.diagnostics.evaluations, 20)
+            self.assertEqual(state.diagnostics.offspring, 7)
+            self.assertEqual(state.diagnostics.rejected, 0)
+            self.assertEqual(state.diagnostics.retries, 0)
+            self.assertEqual(state.diagnostics.retained_parents, 0)
+            self.assertEqual(state.diagnostics.exponent_histogram, ())
+            self.assertTrue(0 <= state.diagnostics.mutation_displacement <= 1)
 
     def test_population_sizes_and_bounded_finite_binary_generations(self):
         for size in (2, 3, 5, 6, 10, 20, 50, None):

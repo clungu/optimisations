@@ -17,6 +17,8 @@ from itertools import islice
 
 from optimisations.graphics import plot_function
 from optimisations.graphics import rotate
+from optimisations.genetic import State as GeneticState
+from optimisations.renderers import decorate_with_genetic_diagnostics
 from optimisations.optimizers import optimize
 
 # %% ../05_animations.ipynb #bc05a2f0
@@ -36,7 +38,7 @@ renderers = {
 }
 
 
-def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figure, renderers: dict):
+def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figure, renderers: dict, show_diagnostics=False):
     if isinstance(i, bool) or not isinstance(i, (int, np.integer)) or i < 0:
         raise ValueError('Frame index must be a nonnegative integer')
     # make sure we have a list of optimizers going forward
@@ -50,6 +52,7 @@ def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figu
 
     plot_function(optimisations[0].function, angle=figure.angle, fig=figure.fig, ax_3d=figure.ax_3d, ax_2d=figure.ax_2d, contour_log_scale=figure.contour_log_scale, azimuth_3d=figure.azimuth_3d, zoom_factor=figure.zoom_factor)
     
+    diagnostic_rows = []
     for optimisation in optimisations:
         if i >= len(optimisation.history) - 1:
             optimisation.update(i - len(optimisation.history) + 2)
@@ -61,12 +64,20 @@ def single_frame(i, optimisations: Union[optimize, List[optimize]], figure: Figu
         renderer = renderer if renderer is not None else renderers.get(optimisation.optimizer_name, default_renderer)
 
         renderer(optimisation.optimizer_name, history, figure)
+        if show_diagnostics:
+            frame_state = optimisation.history[i + 1]
+            if isinstance(frame_state, GeneticState):
+                diagnostic_rows.append((optimisation.optimizer_name, frame_state))
+
+    if diagnostic_rows:
+        decorate_with_genetic_diagnostics(diagnostic_rows, figure)
 
     figure.ax_2d.plot()
     print(".", end ="")
 
 # %% ../05_animations.ipynb #109a3c0d
-def animate(optimisations: Union[optimize, List[optimize]], figure: Figure=None, renderers=renderers, frames=20, interval=50, output='mp4'):
+def animate(optimisations: Union[optimize, List[optimize]], figure: Figure=None, renderers=renderers, frames=20, interval=50, output='mp4', show_diagnostics=False):
+    """Animate optimizer histories; optionally overlay per-generation GA diagnostics."""
     optimisations = [optimisations] if isinstance(optimisations, optimize) else optimisations
     
     assert len(optimisations) >= 1, f"We need at least one optimisation to animate, but {len(optimisations)} given."
@@ -83,7 +94,7 @@ def animate(optimisations: Union[optimize, List[optimize]], figure: Figure=None,
         
     figure = figure.for_function(optimisations[0].function)
     
-    animator = animation.FuncAnimation(figure.fig, partial(single_frame, optimisations=optimisations, figure=figure, renderers=renderers), frames=frames, interval=interval, blit=False)
+    animator = animation.FuncAnimation(figure.fig, partial(single_frame, optimisations=optimisations, figure=figure, renderers=renderers, show_diagnostics=show_diagnostics), frames=frames, interval=interval, blit=False)
     
     if output == 'mp4':
         video = animator.to_html5_video()
